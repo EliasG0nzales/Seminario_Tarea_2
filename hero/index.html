@@ -1247,10 +1247,6 @@ html.js .rv.in { opacity: 1; transform: none; }
   if (!zone || !video) return;
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) {
-    video.classList.add('ready');
-    return;
-  }
 
   var target = 0;
   var smoothed = 0;
@@ -1265,7 +1261,11 @@ html.js .rv.in { opacity: 1; transform: none; }
 
   function frame() {
     target = progress();
-    smoothed += (target - smoothed) * 0.24;
+    if (reduce) {
+      smoothed = target;
+    } else {
+      smoothed += (target - smoothed) * 0.24;
+    }
 
     if (ready && Number.isFinite(video.duration) && video.duration > 0 && !video.seeking) {
       var time = smoothed * Math.max(0, video.duration - 0.05);
