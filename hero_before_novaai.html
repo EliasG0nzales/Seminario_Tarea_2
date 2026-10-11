@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03080B">
+<title>Ley 29733 en pipelines de IA · Tarea 2</title>
+<style>
+@font-face {
+  font-family: "RV Display";
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url("assets/fonts/rv-display.woff2") format("woff2");
+}
+@font-face {
+  font-family: "RV Brand";
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url("assets/fonts/rv-brand.woff2") format("woff2");
+}
+@font-face {
+  font-family: "RV Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("assets/fonts/rv-text.woff2") format("woff2");
+}
+
+:root {
+  --u: max(0.62px, min(calc(100vw / 1280), calc(100dvh / 960)));
+  --g: 56;
+  --gutter: 56px;
+  --shade: 3, 8, 11;
+  --ink: #F5FAF6;
+  --ink-2: #ECF1EF;
+  --teal: #88DECC;
+  --icon-teal: #7EC4B5;
+  --chevron: #7CCBBA;
+  --moth: #315352;
+  --cream: #EEF1EA;
+  --pine: #122B2A;
+  --pine-hover: #26504d;
+  --logo-disc: #030909;
+  --display: "RV Display", "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --brand: "RV Brand", "Urbanist", "Helvetica Neue", Arial, sans-serif;
+  --text: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: #03080B;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+body { font-family: var(--text); -webkit-font-smoothing: antialiased; }
+
+.stage {
+  position: relative;
+  width: 100%;
+  background: #03080B;
+}
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+/* ---------- Video and shades ---------- */
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  pointer-events: none;
+  z-index: 0;
+}
+.shade { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.shade-h {
+  background: linear-gradient(to right,
+    rgba(var(--shade), .683) 0%,
+    rgba(var(--shade), .595) 20%,
+    rgba(var(--shade), .458) 40%,
+    rgba(var(--shade), .221) 60%,
+    rgba(var(--shade), .039) 80%,
+    rgba(var(--shade), .054) 100%);
+}
+.shade-v {
+  background: linear-gradient(to bottom,
+    rgba(var(--shade), .060) 0%,
+    rgba(var(--shade), .023) 20%,
+    rgba(var(--shade), .152) 40%,
+    rgba(var(--shade), .300) 60%,
+    rgba(var(--shade), .394) 80%,
+    rgba(var(--shade), .632) 100%);
+}
+.shade-r {
+  background: radial-gradient(ellipse 93.8% 41.3% at 0% 100%,
+    rgba(var(--shade), 1) 0%,
+    rgba(var(--shade), 0) 100%);
+}
+
+/* ---------- Header ---------- */
+.header {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--u) * 34);
+  left: max(var(--gutter), env(safe-area-inset-left));
+  right: max(var(--gutter), env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--u) * 16);
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  width: calc(var(--u) * 104);
+  height: calc(var(--u) * 46);
+  padding: 0 calc(var(--u) * 6);
+  border-radius: 999px;
+  background: rgba(150, 220, 130, .035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-decoration: none;
+  flex-shrink: 0;
+  position: relative;
+}
+.logo-disc {
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  border-radius: 50%;
+  background: var(--logo-disc);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.logo-disc svg { width: calc(var(--u) * 46); height: calc(var(--u) * 46); display: block; }
+.logo-moth {
+  width: calc(var(--u) * 39);
+  height: calc(var(--u) * 30);
+  margin-left: calc(var(--u) * 12);
+  fill: var(--moth);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.logo-moth svg { width: 100%; height: 100%; display: block; }
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: auto;
+  min-width: calc(var(--u) * 442);
+  height: calc(var(--u) * 47);
+  padding: 0 calc(var(--u) * 6) 0 calc(var(--u) * 22);
+  border-radius: 999px;
+  background: #000;
+  margin-left: auto;
+  margin-right: calc(var(--u) * 80);
+  flex-shrink: 1;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 18);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-links a {
+  font-family: var(--text);
+  font-size: calc(var(--u) * 15);
+  color: var(--ink-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 6);
+  white-space: nowrap;
+  transition: color .25s ease;
+}
+.nav-links a:hover { color: var(--teal); }
+.nav-links a[aria-current="page"] { color: var(--ink); }
+.chev { width: calc(var(--u) * 7); height: calc(var(--u) * 11); display: block; flex-shrink: 0; }
+.chev path { fill: none; stroke: var(--chevron); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.partner {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 12);
+  height: calc(var(--u) * 35);
+  padding: 0 calc(var(--u) * 5) 0 calc(var(--u) * 18);
+  border-radius: 999px;
+  background: var(--cream);
+  color: #03080B;
+  text-decoration: none;
+  font-family: var(--text);
+  font-size: calc(var(--u) * 15);
+  white-space: nowrap;
+}
+.disc {
+  width: calc(var(--u) * 26);
+  height: calc(var(--u) * 26);
+  border-radius: 50%;
+  background: var(--pine);
+  display: grid;
+  place-items: center;
+  transition: background .25s ease;
+}
+.disc svg { width: calc(var(--u) * 7); height: calc(var(--u) * 7); display: block; }
+.disc svg path { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.partner:hover .disc { background: var(--pine-hover); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 10);
+  flex-shrink: 0;
+}
+.sound {
+  width: calc(var(--u) * 48);
+  height: calc(var(--u) * 48);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--ink);
+}
+.sound svg { width: calc(var(--u) * 26); height: calc(var(--u) * 26); display: block; }
+.sound .speaker { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+.sound .wave { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; transition: opacity .25s ease; }
+.sound[aria-pressed="false"] .wave { opacity: .25; }
+
+.menu-btn {
+  display: none;
+  width: calc(var(--u) * 48);
+  height: calc(var(--u) * 48);
+  border-radius: 50%;
+  background: #000;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  place-items: center;
+}
+.menu-btn svg { width: 18px; height: 12px; display: block; }
+.menu-btn line { stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; transition: transform .3s ease, opacity .3s ease; transform-origin: 9px 6px; }
+.menu-btn[aria-expanded="true"] .bar-1 { transform: translateY(5px) rotate(45deg); }
+.menu-btn[aria-expanded="true"] .bar-2 { opacity: 0; }
+.menu-btn[aria-expanded="true"] .bar-3 { transform: translateY(-5px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: absolute;
+  z-index: 4;
+  left: max(var(--gutter), env(safe-area-inset-left));
+  bottom: calc(var(--u) * 150);
+  max-width: calc(100% - 2 * var(--gutter));
+  transform-origin: left bottom;
+}
+.brand {
+  display: block;
+  font-family: var(--brand);
+  font-weight: 600;
+  font-size: calc(var(--u) * 18);
+  color: var(--teal);
+  text-decoration: none;
+  margin-bottom: calc(var(--u) * 18);
+}
+.title {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: calc(var(--u) * 92);
+  line-height: .92;
+  margin: 0;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: .08em;
+}
+.line > span { display: inline-block; }
+.line-1 { letter-spacing: -0.045em; }
+.line-2 { letter-spacing: -0.04em; }
+.line-3 { letter-spacing: -0.035em; }
+.lede {
+  font-family: var(--text);
+  font-weight: 400;
+  font-size: calc(var(--u) * 22);
+  line-height: 1.5;
+  color: var(--ink-2);
+  opacity: .86;
+  margin: calc(var(--u) * 26) 0 0;
+}
+.lede span { display: block; }
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 22);
+  margin-top: calc(var(--u) * 34);
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 16);
+  height: calc(var(--u) * 46);
+  padding: 0 calc(var(--u) * 8) 0 calc(var(--u) * 24);
+  border-radius: 999px;
+  background: var(--cream);
+  color: #03080B;
+  text-decoration: none;
+  font-family: var(--text);
+  font-size: calc(var(--u) * 16);
+  white-space: nowrap;
+}
+.cta .disc {
+  width: calc(var(--u) * 36);
+  height: calc(var(--u) * 36);
+}
+.cta .disc svg { width: calc(var(--u) * 9); height: calc(var(--u) * 9); }
+.cta:hover .disc { background: var(--pine-hover); }
+.text-link {
+  font-family: var(--text);
+  font-size: calc(var(--u) * 16);
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(245, 250, 246, .5);
+  padding-bottom: calc(var(--u) * 3);
+  transition: color .25s ease, border-color .25s ease;
+}
+.text-link:hover { color: var(--teal); border-color: var(--teal); }
+
+/* ---------- Scroll cue ---------- */
+.cue {
+  position: absolute;
+  z-index: 5;
+  right: max(var(--gutter), env(safe-area-inset-right));
+  bottom: calc(var(--u) * 44);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 12);
+  font-family: var(--text);
+  font-size: calc(var(--u) * 12);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transform-origin: right bottom;
+  transition: color .25s ease;
+}
+.cue svg { width: calc(var(--u) * 10); height: calc(var(--u) * 14); display: block; }
+.cue svg path { fill: none; stroke: var(--chevron); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.cue:hover { color: var(--teal); }
+.cue:hover svg path { stroke: var(--teal); }
+
+/* ---------- Focus ---------- */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 4px;
+}
+
+/* ---------- Entrance hidden state ---------- */
+.pre { opacity: 0; }
+
+/* ---------- Desktop shades adjust for wide screens ---------- */
+@media (min-aspect-ratio: 16/9) {
+  .bg-video { object-position: 50% 24%; }
+}
+
+/* ---------- Mobile portrait and narrow ---------- */
+@media (max-width: 649.98px), (max-height: 500px) {
+  :root {
+    --u: clamp(0.94px, calc(100vw / 390), 1.2px);
+    --g: clamp(18px, 5.6vw, 32px);
+    --gutter: clamp(18px, 5.6vw, 32px);
+  }
+  .bg-video { object-position: 63% 50%; }
+  .shade-h {
+    background: linear-gradient(to right,
+      rgba(var(--shade), .55) 0%,
+      rgba(var(--shade), .40) 35%,
+      rgba(var(--shade), .18) 70%,
+      rgba(var(--shade), .10) 100%);
+  }
+  .shade-v {
+    background: linear-gradient(to bottom,
+      rgba(var(--shade), .10) 0%,
+      rgba(var(--shade), .20) 35%,
+      rgba(var(--shade), .45) 65%,
+      rgba(var(--shade), .78) 100%);
+  }
+  .shade-r { display: none; }
+}
+
+@media (max-width: 649.98px) {
+  .nav-pill { display: none; }
+  .menu-btn { display: grid; }
+  .header-right { gap: calc(var(--u) * 10); margin-left: auto; }
+  .mobile-nav {
+    display: none;
+    position: absolute;
+    z-index: 6;
+    top: calc(var(--u) * 98);
+    left: max(var(--gutter), env(safe-area-inset-left));
+    right: max(var(--gutter), env(safe-area-inset-right));
+    background: #000;
+    border-radius: 24px;
+    padding: calc(var(--u) * 12) calc(var(--u) * 16) calc(var(--u) * 16);
+  }
+  .mobile-nav.is-open { display: block; }
+  .mobile-nav .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .mobile-nav .nav-links a {
+    height: 48px;
+    font-size: 17px;
+    padding: 0 6px;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+  }
+  .mobile-nav .partner {
+    margin-top: 12px;
+    width: 100%;
+    justify-content: space-between;
+    height: 48px;
+    font-size: 17px;
+  }
+  .hero {
+    bottom: calc(var(--u) * 110);
+  }
+  .title {
+    font-size: min(clamp(32px, 10.4vw, 60px), calc((100vw - 2 * var(--gutter)) / 8.7));
+    white-space: normal;
+  }
+  .line-1 { letter-spacing: -0.04em; }
+  .line-2 { letter-spacing: -0.035em; }
+  .line-3 { letter-spacing: -0.03em; }
+  .actions { flex-wrap: wrap; }
+  .text-link, .cue { min-height: 44px; display: inline-flex; align-items: center; }
+  .cue { bottom: calc(var(--u) * 24); }
+}
+
+/* ---------- Short landscape phones ---------- */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  :root {
+    --u: clamp(0.82px, calc(100dvh / 415), 0.94px);
+  }
+  .bg-video { object-position: 50% 30%; }
+  .title { font-size: clamp(28px, 10dvh, 44px); }
+  .actions { flex-wrap: nowrap; }
+  .hero { bottom: calc(var(--u) * 80); }
+}
+@media (max-width: 649.98px) and (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .nav-pill { display: none; }
+  .menu-btn { display: grid; }
+  .mobile-nav.is-open {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
+  }
+  .mobile-nav.is-open .partner { grid-column: 1 / -1; }
+}
+
+/* ---------- Tablets ---------- */
+@media (min-width: 650px) and (max-width: 1100px) and (min-height: 501px) {
+  :root { --u: 0.94px; }
+}
+@media (min-width: 650px) and (max-aspect-ratio: 4/5) and (min-height: 501px) {
+  :root { --u: 0.94px; }
+  .bg-video { object-position: 58% 50%; }
+  .hero { transform: scale(1.1); }
+  .cue { transform: scale(1.1); }
+}
+
+
+/* ---------- Document sections ---------- */
+.doc {
+  position: relative;
+  padding: 110px 56px;
+  border-top: 1px solid rgba(236, 241, 239, .08);
+  background: #03080B;
+}
+.doc-inner { max-width: 1180px; margin: 0 auto; }
+.doc-kicker {
+  font-family: var(--text);
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0 0 14px;
+}
+.doc h2 {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  color: var(--ink);
+  margin: 0 0 18px;
+}
+.doc-lead {
+  font-family: var(--text);
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  opacity: .86;
+  max-width: 760px;
+  margin: 0 0 36px;
+}
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.doc .card {
+  border: 1px solid rgba(236, 241, 239, .1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .035);
+  padding: 24px;
+  transition: border-color .3s ease;
+}
+.doc .card:hover { border-color: rgba(136, 222, 204, .4); }
+.doc .card h3 {
+  font-family: var(--text);
+  font-weight: 400;
+  font-size: 19px;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+.doc .card p, .doc .card li {
+  font-family: var(--text);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  opacity: .82;
+}
+.doc .card ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+.doc .card .num { font-family: var(--text); font-size: 12px; letter-spacing: .15em; color: var(--teal); margin-bottom: 10px; display: block; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+.lvl {
+  font-family: var(--text);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(136, 222, 204, .4);
+  color: var(--teal);
+}
+.lvl.alto { border-color: rgba(233, 131, 111, .5); color: #E9836F; }
+.lvl.medio { border-color: rgba(233, 210, 138, .5); color: #E9D28A; }
+.doc .src { margin-top: 36px; font-size: 13px; line-height: 1.9; }
+.doc .src a { color: var(--teal); word-break: break-all; }
+.doc .src strong { color: var(--ink); font-weight: 400; }
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 649.98px) {
+  .doc { padding: 80px 22px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+</style>
+</head>
+<body>
+<main class="stage">
+<div class="screen">
+  <video class="bg-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261005_182346_a590ff3b-72e5-41ce-8f69-a8c823eaecaa.mp4" type="video/mp4">
+  </video>
+  <div class="shade shade-h"></div>
+  <div class="shade shade-v"></div>
+  <div class="shade shade-r"></div>
+
+  <header class="header">
+    <a class="logo pre" id="logo" href="#" aria-label="Inicio">
+      <span class="logo-disc">
+        <svg viewBox="0 0 46 46" fill="none" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path class="tree-path" d="M24.2 37V24"/>
+          <path class="tree-path" d="M19.8 39.3c1.2-1.9 2.8-2.7 4.4-2.7s3.2.8 4.4 2.7"/>
+          <path class="tree-path" d="M23.8 30.2c-2.8-.6-5.5-2.6-7.2-5-2-1.8-5.2-2-7-4.2-1.4-1.8-1.4-4.2 0-6 2-3 5.8-5.2 8.8-6.2 1.4-.5 2.8-1 4.2-1.3"/>
+          <path class="tree-path" d="M14.8 23V13.2c0-1.4.8-2.6 2.4-3.4"/>
+          <path class="tree-path" d="M24 24.2c-1.8-1.8-3.2-3.8-3.7-6.4-.5-2.6-.6-5.2-.3-7.2"/>
+          <path class="tree-path" d="M24.3 23.2c1.5-3 3.5-6.4 4.3-10.2.4-2.6 1.2-4.1 2.8-4.3H35"/>
+          <path class="tree-path" d="M24.6 25.7c3-.7 5.8-2.1 7.4-4.5 1.2-1.8 1.4-3.8 2.8-5.2 1.4-1.4 3.2-2.1 5.2-2.4"/>
+        </svg>
+      </span>
+      <span class="logo-moth" id="moth">
+        <svg viewBox="0 0 39 30" aria-hidden="true">
+          <path d="M19.5 12.4C17.5 9.5 14 5 10.8 3 9.6 2.4 8 2.2 6 2.3 4.2 2.4 3.1 3 3 4.8L3.1 9.8C3.2 12.4 5 15 8.3 17.3 6.6 19.5 5.6 21.8 5.4 24.2 5.2 26.2 5.8 27.6 7.3 28 8.8 28.3 10.2 27.3 11.4 25.8 14.2 22.6 17.2 19.8 19.5 17.1Z"/>
+          <path transform="matrix(-1 0 0 1 39 0)" d="M19.5 12.4C17.5 9.5 14 5 10.8 3 9.6 2.4 8 2.2 6 2.3 4.2 2.4 3.1 3 3 4.8L3.1 9.8C3.2 12.4 5 15 8.3 17.3 6.6 19.5 5.6 21.8 5.4 24.2 5.2 26.2 5.8 27.6 7.3 28 8.8 28.3 10.2 27.3 11.4 25.8 14.2 22.6 17.2 19.8 19.5 17.1Z"/>
+        </svg>
+      </span>
+    </a>
+
+    <nav class="nav-pill pre" id="navPill" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="#contexto">El caso</a></li>
+        <li><a href="#diagnostico" aria-current="page">Diagnóstico
+          <svg class="chev" viewBox="0 0 8 11" aria-hidden="true"><path d="M.7.7 5.5 5.3 10.3.7"/></svg>
+        </a></li>
+        <li><a href="#arquitectura">Arquitectura</a></li>
+        <li><a href="#arco">Derechos ARCO</a></li>
+        <li><a href="#preguntas">Preguntas</a></li>
+      </ul>
+      <a class="partner" href="#conclusiones">
+        Conclusiones
+        <span class="disc">
+          <svg viewBox="0 0 8 8" aria-hidden="true"><path d="M.5.5 3.5 3.5.5 6.5"/></svg>
+        </span>
+      </a>
+    </nav>
+
+    <div class="header-right">
+      <button class="sound pre" id="sound" type="button" aria-label="Sonido ambiental" aria-pressed="true">
+        <svg viewBox="0 0 46 46" aria-hidden="true">
+          <path class="speaker" d="M14.6 19.6h3.6l5.9-4.9v18.6l-5.9-4.9h-3.6z"/>
+          <path class="wave wave-1" d="M27.6 19.6c1.9 2.8 1.9 6 0 8.8"/>
+          <path class="wave wave-2" d="M31.2 16.2c3.4 4.9 3.4 10.7 0 15.6"/>
+        </svg>
+      </button>
+      <button class="menu-btn pre" id="menuBtn" type="button" aria-label="Menú" aria-expanded="false" aria-controls="mobileNav">
+        <svg viewBox="0 0 18 12" aria-hidden="true">
+          <line class="bar-1" x1="1" y1="1" x2="17" y2="1"/>
+          <line class="bar-2" x1="1" y1="6" x2="17" y2="6"/>
+          <line class="bar-3" x1="1" y1="11" x2="17" y2="11"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-nav" id="mobileNav">
+      <ul class="nav-links">
+        <li><a href="#contexto">El caso</a></li>
+        <li><a href="#diagnostico" aria-current="page">Diagnóstico
+          <svg class="chev" viewBox="0 0 8 11" aria-hidden="true"><path d="M.7.7 5.5 5.3 10.3.7"/></svg>
+        </a></li>
+        <li><a href="#arquitectura">Arquitectura</a></li>
+        <li><a href="#arco">Derechos ARCO</a></li>
+        <li><a href="#preguntas">Preguntas</a></li>
+      </ul>
+      <a class="partner" href="#conclusiones">
+        Conclusiones
+        <span class="disc">
+          <svg viewBox="0 0 8 8" aria-hidden="true"><path d="M.5.5 3.5 3.5.5 6.5"/></svg>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <section class="hero" id="hero">
+    <a class="brand pre" id="brand" href="#contexto">Ley N.° 29733 · Perú</a>
+    <h1 class="title" id="title">
+      <span class="line line-1"><span class="pre-line">Datos personales</span></span>
+      <span class="line line-2"><span class="pre-line">en pipelines</span></span>
+      <span class="line line-3"><span class="pre-line">de IA</span></span>
+    </h1>
+    <p class="lede" id="lede">
+      <span class="pre" id="lede1">Diseñar la ingestión, el entrenamiento y el despliegue de IA con privacidad desde el origen.</span>
+      <span class="pre" id="lede2">Cumplimiento de la Ley 29733, derechos ARCO y seguridad para Retail y Finanzas.</span>
+    </p>
+    <div class="actions" id="actions">
+      <a class="cta pre" id="cta" href="#arquitectura">
+        Explorar la propuesta
+        <span class="disc">
+          <svg viewBox="0 0 8 8" aria-hidden="true"><path d="M.6.6 4 4 .6 7.4" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+      <a class="text-link pre" id="textLink" href="#contexto">Ver el caso</a>
+    </div>
+  </section>
+
+  <a class="cue pre" id="cue" href="#contexto">
+    Desplázate para ver el detalle
+    <svg viewBox="0 0 10 14" aria-hidden="true"><path d="M.7.7 5.5 5.3 10.3.7" transform="translate(-.5 4)"/></svg>
+  </a>
+</div>
+
+<section class="doc" id="contexto">
+  <div class="doc-inner">
+    <p class="doc-kicker">01 · El caso</p>
+    <h2>Una empresa de Retail y Finanzas lanza IA omnicanal</h2>
+    <p class="doc-lead">Un sistema con tres componentes procesa datos personales, sensibles y biométricos. Una auditoría reciente advierte brechas de seguridad, consentimiento poco claro y riesgo de multas de la ANPD. Nuestro equipo fue contratado como nuevo Arquitecto de Datos e IA para reestructurar la solución técnica y normativa.</p>
+    <div class="cards">
+      <article class="card"><span class="num">COMPONENTE 1</span><h3>Pipeline de ingestión y analítica</h3><p>Extracción masiva de datos transaccionales, hábitos de consumo, biometría de acceso a tiendas y solvencia económica, desde bases locales y servicios en la nube.</p></article>
+      <article class="card"><span class="num">COMPONENTE 2</span><h3>Modelo predictivo y de recomendación</h3><p>ML supervisado para riesgo crediticio y NLP para analizar el comportamiento del usuario, ofertar productos y segmentar publicidad.</p></article>
+      <article class="card"><span class="num">COMPONENTE 3</span><h3>Portal / API de autoservicio</h3><p>Los clientes consultan su estado y envían solicitudes sobre el manejo de sus datos. Es el canal para ejercer los derechos ARCO.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="doc" id="diagnostico">
+  <div class="doc-inner">
+    <p class="doc-kicker">02 · Fase 1 · Diagnóstico normativo</p>
+    <h2>Clasificación, consentimiento y casos reales</h2>
+    <p class="doc-lead">Ley N.° 29733: los datos se clasifican por nivel de seguridad, el consentimiento debe ser libre, previo, expreso, inequívoco e informado, y los casos enseñan qué fallas evitar.</p>
+    <div class="cards">
+      <article class="card">
+        <span class="num">CLASIFICACIÓN DE BANCOS DE DATOS</span>
+        <h3>Según el nivel de seguridad</h3>
+        <div class="badge-row"><span class="lvl">Básico</span><span class="lvl medio">Medio</span><span class="lvl alto">Alto</span></div>
+        <ul>
+          <li><strong>Básico:</strong> identificativos (nombre, DNI, correo, teléfono).</li>
+          <li><strong>Medio:</strong> hábitos de consumo y transaccionales.</li>
+          <li><strong>Alto:</strong> biometría facial e ingresos económicos (datos sensibles).</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="num">REQUISITOS DE CAPTACIÓN</span>
+        <h3>Consentimiento válido</h3>
+        <ul>
+          <li>Previo, informado, expreso e inequívoco (art. 13.5).</li>
+          <li>Datos sensibles: por escrito.</li>
+          <li>Uso operativo y prospección comercial son finalidades distintas.</li>
+          <li>Una casilla preseleccionada no es consentimiento.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="num">ANÁLISIS DE VULNERABILIDADES</span>
+        <h3>Dos casos de estudio</h3>
+        <ul>
+          <li><strong>Clearview AI:</strong> recolección masiva de fotos para reconocimiento facial sin consentimiento.</li>
+          <li><strong>Equifax (2017):</strong> brecha que expuso a unas 147 millones de personas por un parche no aplicado.</li>
+          <li><strong>Saga Falabella:</strong> sanción de Indecopi por comunicaciones comerciales sin consentimiento previo.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="doc" id="arquitectura">
+  <div class="doc-inner">
+    <p class="doc-kicker">03 · Fase 2 · Diseño de arquitectura</p>
+    <h2>Diagrama de arquitectura de datos segura</h2>
+    <p class="doc-lead">Bloques o tuberías de datos con validación de consentimiento, seudonimización, almacenamiento segregado y cifrado en tránsito y en reposo.</p>
+    <div class="cards">
+      <article class="card"><span class="num">MÓDULO 1</span><h3>Ingestión y consentimiento</h3><p>Puntos de captura de datos con validación de consentimiento antes de guardar cualquier registro.</p></article>
+      <article class="card"><span class="num">MÓDULO 2</span><h3>Anonimización y seudonimización</h3><p>Enmascaramiento o hashing de datos personales antes de alimentar la capa de entrenamiento de ML.</p></article>
+      <article class="card"><span class="num">MÓDULO 3</span><h3>Almacenamiento segregado</h3><p>Bancos separados para identificativos, datos transaccionales y datos sensibles (biometría).</p></article>
+      <article class="card"><span class="num">MÓDULO 4</span><h3>Cifrado y niveles de seguridad</h3><p>TLS 1.2+ en tránsito y AES-256 en reposo, con claves gestionadas por separado.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="doc" id="arco">
+  <div class="doc-inner">
+    <p class="doc-kicker">04 · Fase 2 · Derechos ARCO</p>
+    <h2>Eliminar datos sin romper el pipeline</h2>
+    <p class="doc-lead">Cuando un usuario ejerce un derecho ARCO, el sistema debe borrar los datos de las bases operativas, mantener la integridad de los pipelines y actualizar los modelos entrenados.</p>
+    <div class="cards">
+      <article class="card"><span class="num">FLUJO DE CANCELACIÓN / SUPRESIÓN</span><h3>Del pedido al registro</h3><p>Solicitud, verificación de identidad, supresión en bases operativas, uso de seudónimos para que los joins no fallen y evidencia en log. Plazo: 10 días hábiles para oposición, rectificación y cancelación.</p></article>
+      <article class="card"><span class="num">RETORNO DE MODELOS</span><h3>Estrategia de retrain o desvinculación</h3><ul><li>Excluir al titular en el próximo retrain.</li><li>Entrenamiento por shards (SISA) para reentrenar solo una parte.</li><li>Unlearning aproximado para modelos grandes.</li><li>Desvincular sus vectores del índice.</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="doc" id="preguntas">
+  <div class="doc-inner">
+    <p class="doc-kicker">05 · Fase 3 · Cuestionario técnico</p>
+    <h2>Respuestas a las preguntas del comité</h2>
+    <p class="doc-lead">Respuestas con rigor técnico y legal, con sus acciones concretas.</p>
+    <div class="cards">
+      <article class="card"><span class="num">PREGUNTA 1 · OPOSICIÓN Y PERFILAMIENTO</span><h3>Ajustes inmediatos en el pipeline</h3><p>Excluir al titular del scoring desde la solicitud. La API de inferencia consulta la bandera de oposición antes de puntuar, y el caso pasa a revisión humana. La oposición exige motivo legítimo y fundado.</p></article>
+      <article class="card"><span class="num">PREGUNTA 2 · BIOMETRÍA</span><h3>¿Entrenar con imágenes de tiendas?</h3><p>No sin un consentimiento específico. Los datos biométricos son sensibles y la finalidad de control de acceso no cubre el análisis de compras (principio de finalidad, art. 6). El BCP fue multado en 2025 con S/ 124,200 y S/ 165,600.</p></article>
+      <article class="card"><span class="num">PREGUNTA 3 · TRANSFERENCIA</span><h3>Nube fuera del Perú</h3><p>Solo con nivel adecuado de protección o cláusulas contractuales (art. 15, DL 1353; arts. 18 a 20 del reglamento). Cifrar en tránsito y en reposo, con claves propias, y exportar solo datos seudonimizados.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="doc" id="conclusiones">
+  <div class="doc-inner">
+    <p class="doc-kicker">06 · Cierre</p>
+    <h2>Cinco ideas clave</h2>
+    <div class="cards">
+      <article class="card"><span class="num">01</span><h3>Privacidad desde el diseño</h3><p>Validar el consentimiento en la ingestión, antes de guardar cualquier dato.</p></article>
+      <article class="card"><span class="num">02</span><h3>Consentimiento por finalidad</h3><p>Separar uso operativo y marketing. Sin acción afirmativa no hay consentimiento.</p></article>
+      <article class="card"><span class="num">03</span><h3>Segregar y seudonimizar</h3><p>Bancos separados y seudónimos antes de entrenar. La biometría se aísla.</p></article>
+      <article class="card"><span class="num">04</span><h3>ARCO automatizado</h3><p>Supresión que no rompe el pipeline y retrain que excluye al titular.</p></article>
+      <article class="card"><span class="num">05</span><h3>Transferencias con garantías</h3><p>Nivel adecuado o cláusulas contractuales, y cifrado con claves propias.</p></article>
+    </div>
+    <div class="src">
+      <strong>Fuentes</strong><br>
+      Ley N.° 29733 (texto oficial OEA): https://www.oas.org/es/sla/ddi/docs/P6%20Ley%2029733%20de%20protecci%C3%B3n%20de%20datos%20personales.pdf<br>
+      Nuevo reglamento DS 016-2024-JUS (IAPP): https://iapp.org/news/a/se-publica-el-nuevo-reglamento-de-protecci-n-de-datos-personales-en-per-<br>
+      Sanción al BCP (Infobae, 2025): https://www.infobae.com/peru/2025/01/06/bcp-es-sancionado-con-casi-s-300000-por-recolectar-y-almacenar-datos-biometricos-faciales-de-usuarios-sin-permiso/<br>
+      Indecopi, Banco Falabella (45 UIT, 2020): https://static.legis.pe/wp-content/uploads/2020/01/Indecopi-Saga-Falabella-LP.pdf
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var video = document.querySelector('.bg-video');
+  video.defaultMuted = true;
+  video.muted = true;
+
+  // ---------- Sound toggle (no audio file; state only) ----------
+  var sound = document.getElementById('sound');
+  sound.addEventListener('click', function () {
+    var on = sound.getAttribute('aria-pressed') === 'true';
+    sound.setAttribute('aria-pressed', on ? 'false' : 'true');
+  });
+
+  // ---------- Mobile menu ----------
+  var menuBtn = document.getElementById('menuBtn');
+  var mobileNav = document.getElementById('mobileNav');
+  function isOpen() { return mobileNav.classList.contains('is-open'); }
+  function openMenu() {
+    mobileNav.classList.add('is-open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    var first = mobileNav.querySelector('a');
+    if (first) first.focus();
+  }
+  function closeMenu(returnFocus) {
+    mobileNav.classList.remove('is-open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    if (returnFocus) menuBtn.focus();
+  }
+  menuBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    isOpen() ? closeMenu(false) : openMenu();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) closeMenu(true);
+  });
+  document.addEventListener('click', function (e) {
+    if (isOpen() && !mobileNav.contains(e.target) && !menuBtn.contains(e.target)) closeMenu(false);
+  });
+  mobileNav.addEventListener('click', function (e) {
+    if (e.target.closest('a')) closeMenu(false);
+  });
+
+  // ---------- Entrance ----------
+  var done = false;
+  function showAll() {
+    document.querySelectorAll('.pre').forEach(function (el) { el.classList.remove('pre'); });
+    document.querySelectorAll('.pre-line').forEach(function (el) { el.classList.remove('pre-line'); });
+  }
+
+  function lift(el, from, delay, duration, easing, opacity) {
+    var frames = [
+      { transform: 'translateY(' + from + 'px)', opacity: opacity === false ? 1 : 0 },
+      { transform: 'translateY(0)', opacity: 1 }
+    ];
+    return el.animate(frames, { delay: delay, duration: duration, easing: easing, fill: 'backwards' });
+  }
+
+  function runTimeline() {
+    var k = (window.innerWidth < 650 ? 0.8 : 1) * (document.getElementById('cta').offsetHeight / 46);
+    var d = function (px) { return Math.round(px * k); };
+    var QUART = 'cubic-bezier(0.25, 1, 0.5, 1)';
+    var EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    var GROW = 'cubic-bezier(0.45, 0, 0.2, 1)';
+    var anims = [];
+
+    // Logo fades in at 0ms
+    var logo = document.getElementById('logo');
+    anims.push(logo.animate([{ opacity: 0 }, { opacity: 1 }], { delay: 0, duration: 500, easing: QUART, fill: 'backwards' }));
+
+    // Tree strokes draw on
+    var paths = logo.querySelectorAll('.tree-path');
+    paths.forEach(function (p, i) {
+      var L = p.getTotalLength();
+      p.setAttribute('stroke-dasharray', String(L));
+      var a = p.animate([{ strokeDashoffset: L }, { strokeDashoffset: 0 }], {
+        delay: 80 + 45 * i, duration: 820, easing: GROW, fill: 'backwards'
+      });
+      a.onfinish = function () { p.removeAttribute('stroke-dasharray'); };
+      anims.push(a);
+    });
+
+    // Moth fades and scales from 0.92 at 420ms for 650ms
+    var moth = document.getElementById('moth');
+    anims.push(moth.animate(
+      [{ opacity: 0, transform: 'scale(0.92)' }, { opacity: 1, transform: 'scale(1)' }],
+      { delay: 420, duration: 650, easing: EXPO, fill: 'backwards' }
+    ));
+
+    // Nav or menu lifts 8px at 120ms; links ripple from 260ms, 45ms apart, lifting 4px
+    var navPill = document.getElementById('navPill');
+    anims.push(lift(navPill, d(8), 120, 700, EXPO));
+    anims.push(lift(menuBtn, d(8), 120, 700, EXPO));
+    navPill.querySelectorAll('.nav-links > li > a').forEach(function (a, i) {
+      anims.push(lift(a, d(4), 260 + 45 * i, 700, EXPO));
+    });
+    mobileNav.querySelectorAll('.nav-links > li > a').forEach(function (a, i) {
+      anims.push(lift(a, d(4), 260 + 45 * i, 700, EXPO));
+    });
+
+    // Sound lifts 8px at 200ms
+    anims.push(lift(sound, d(8), 200, 700, EXPO));
+
+    // Brand lifts 10px at 300ms, 650ms
+    anims.push(lift(document.getElementById('brand'), d(10), 300, 650, EXPO));
+
+    // Headline lines rise from translateY(115%) inside their clip mask: 380ms, +90ms per line, 1050ms
+    document.querySelectorAll('.line > span').forEach(function (span, i) {
+      anims.push(span.animate(
+        [{ transform: 'translateY(115%)' }, { transform: 'translateY(0)' }],
+        { delay: 380 + 90 * i, duration: 1050, easing: EXPO, fill: 'backwards' }
+      ));
+    });
+
+    // Lede lines lift 14px at 800ms and 860ms, 800ms
+    anims.push(lift(document.getElementById('lede1'), d(14), 800, 800, EXPO));
+    anims.push(lift(document.getElementById('lede2'), d(14), 860, 800, EXPO));
+
+    // CTA lifts 12px at 1000ms, 800ms
+    anims.push(lift(document.getElementById('cta'), d(12), 1000, 800, EXPO));
+
+    // Text link lifts 8px at 1100ms, 600ms, quart
+    anims.push(lift(document.getElementById('textLink'), d(8), 1100, 600, QUART));
+
+    // Scroll cue lifts from -6px at 1250ms, 700ms
+    anims.push(lift(document.getElementById('cue'), d(-6), 1250, 700, EXPO));
+
+    // Remove hidden state now; fill backwards keeps the start frames during delays
+    showAll();
+
+    Promise.all(anims.map(function (a) { return a.finished.catch(function () {}); })).then(function () {
+      requestAnimationFrame(function () {
+        // Force a one-frame redraw of the logo and the action row
+        void logo.offsetWidth;
+        void document.getElementById('actions').offsetWidth;
+      });
+    });
+  }
+
+  function start() {
+    if (done) return;
+    done = true;
+    if (reduce) { showAll(); return; }
+    runTimeline();
+  }
+
+  if (reduce) {
+    showAll();
+  } else {
+    var videoReady = new Promise(function (resolve) {
+      if (video.readyState >= 2) resolve();
+      else video.addEventListener('loadeddata', resolve, { once: true });
+      video.addEventListener('error', resolve, { once: true });
+    });
+    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    Promise.all([fontsReady, videoReady]).then(start);
+    // Failsafe: remove hidden state after 3.5s
+    setTimeout(function () {
+      if (!done) { done = true; showAll(); }
+    }, 3500);
+  }
+})();
+</script>
+</body>
+</html>
